@@ -21,7 +21,7 @@ func run() {
 
 	prefix := os.Args[1]
 	now := time.Now()
-	name := prefix + now.Format("2006-01-02-15-04-05")
+	name := prefix + now.Format("_2006-01-02-15-04-05")
 
 	fileName := name + ".png"
 	file, _ := os.Create(fileName)
