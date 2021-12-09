@@ -9,7 +9,7 @@ import (
 	"github.com/kbinani/screenshot"
 )
 
-func main() {
+func run() {
 	start := time.Now()
 	bounds := screenshot.GetDisplayBounds(0)
 
@@ -18,7 +18,9 @@ func main() {
 		panic(err)
 	}
 
-	name := os.Args[1]
+	prefix := os.Args[1]
+	now := time.Now()
+	name := prefix + now.Format("2006-01-02-15-04-05")
 
 	fileName := name + ".png"
 	file, _ := os.Create(fileName)
@@ -28,4 +30,19 @@ func main() {
 	fmt.Println(fileName)
 
 	fmt.Println(time.Since(start))
+}
+
+func main() {
+	loopCount := 1
+	
+	if len(os.Args) > 2 {
+		if i, err := strconv.Atioi(os.Args[2]); err == nil {
+			fmt.Printf("Looping %d time(s)\n", i)
+			loopCount = i
+		}
+	}
+	
+	for i := 0; i < loopCount; i++ {
+		run()
+	}
 }
