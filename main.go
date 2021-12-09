@@ -46,7 +46,7 @@ func main() {
 	for i := 1; i <= loopCount; i++ {
 		run()
 		if i != loopCount {
-			time.Sleep(2)
+			time.Sleep(2 * time.Second)
 		}
 	}
 	
