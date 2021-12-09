@@ -8,13 +8,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          GOOS=darwin
-          GORCH=amd64
-          go build -o build/screenshot-macos
-          ./build/screenshot-macos testing-macos
-          ./build/screenshot-macos testing-macos 2
-          ./build/screenshot-macos testing-macos 1
-          ./build/screenshot-macos testing-macos 0
-          ./build/screenshot-macos testing-macos invalid
+      - run: GOOS=darwin GORCH=amd64 go build -o build/screenshot-macos
+      - run: ./build/screenshot-macos testing-macos
+      - run: ./build/screenshot-macos testing-macos 2
+      - run: ./build/screenshot-macos testing-macos 1
+      - run: ./build/screenshot-macos testing-macos 0
+      - run: ./build/screenshot-macos testing-macos invalid
       - {name: Store, uses: actions/upload-artifact@v2, with: {name: build, path: build, if-no-files-found: error}}
