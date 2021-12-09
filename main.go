@@ -49,4 +49,6 @@ func main() {
 			time.Sleep(2)
 		}
 	}
+	
+	fmt.Println("Done")
 }
