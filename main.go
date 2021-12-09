@@ -37,13 +37,16 @@ func main() {
 	loopCount := 1
 	
 	if len(os.Args) > 2 {
-		if i, err := strconv.Atioi(os.Args[2]); err == nil {
+		if i, err := strconv.Atoi(os.Args[2]); err == nil {
 			fmt.Printf("Looping %d time(s)\n", i)
 			loopCount = i
 		}
 	}
 	
-	for i := 0; i < loopCount; i++ {
+	for i := 1; i <= loopCount; i++ {
 		run()
+		if i != loopCount {
+			time.Sleep(2)
+		}
 	}
 }
