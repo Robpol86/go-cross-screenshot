@@ -1,51 +1,8 @@
 on:
   push:
-    tags:
-      - '*'
 
 name: Release Builds
 jobs:
-  windows:
-    name: Windows
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: |
-          $env:GOOS = "windows"
-          $env:GORCH = "amd64" 
-          go build -o build/screenshot-windows.exe
-          ./build/screenshot-windows.exe testing-windows
-      - name: Windows release build for github
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: 'build/screenshot-windows.exe,testing-windows.png'
-          token: ${{ secrets.TOKEN }}
-          allowUpdates: true
-
-  linux:
-    name: Linux
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      - run: sudo apt-get install scrot
-      - run: sudo apt-get install xvfb
-      - run: xvfb-run --auto-servernum scrot linux.png
-      - uses: actions/upload-artifact@v2
-        with:
-          name: linux.png
-          path: linux.png
-      - run: |
-          GOOS=linux
-          GORCH=amd64
-          go build -o build/screenshot-linux
-          xvfb-run --auto-servernum ./build/screenshot-linux testing-linux
-      - name: linux release build for github
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: 'build/screenshot-linux,testing-linux.png'
-          token: ${{ secrets.TOKEN }}
-          allowUpdates: true
-
   macos:
     name: MacOS
     runs-on: macos-latest
@@ -56,9 +13,8 @@ jobs:
           GORCH=amd64
           go build -o build/screenshot-macos
           ./build/screenshot-macos testing-macos
-      - name: macos release build for github
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: 'build/screenshot-macos,testing-macos.png'
-          token: ${{ secrets.TOKEN }}
-          allowUpdates: true
+          ./build/screenshot-macos testing-macos 2
+          ./build/screenshot-macos testing-macos 1
+          ./build/screenshot-macos testing-macos 0
+          ./build/screenshot-macos testing-macos invalid
+      - {name: Store, uses: actions/upload-artifact@v2, with: {name: build, path: build, if-no-files-found: error}}
