@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/kbinani/screenshot"
+	"github.com/cretz/go-scrap"
 	"github.com/sevlyar/go-daemon"
 )
 
@@ -15,10 +15,30 @@ func ss() error {
 	start := time.Now()
 
 	// Take screenshot.
-	bounds := screenshot.GetDisplayBounds(0)
-	img, err := screenshot.CaptureRect(bounds)
+	if err := scrap.MakeDPIAware(); err != nil {
+		panic(err)
+	}
+	d, err := scrap.PrimaryDisplay()
 	if err != nil {
 		panic(err)
+	}
+	c, err := scrap.NewCapturer(d)
+	if err != nil {
+		panic(err)
+	}
+	for {
+		if img, _, err := c.FrameImage(); img != nil || err != nil {
+			// Detach the image so it's safe to use after this method
+			if img != nil {
+				img.Detach()
+			}
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+		// Sleep 17ms (~1/60th of a second)
+		time.Sleep(17 * time.Millisecond)
 	}
 
 	// Determine file name.
