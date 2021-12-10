@@ -8,7 +8,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - run: cd scrap-sys && cargo build --release && cd ..
+      - run: go get -d github.com/cretz/go-scrap && cd go-scrap/scrap-sys && cargo build --release && cd ../..
       - run: GOOS=darwin GORCH=amd64 go build -o build/screenshot-macos
       - run: ./build/screenshot-macos testing-macos
       - run: ./build/screenshot-macos testing-macos 2
