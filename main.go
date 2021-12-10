@@ -11,7 +11,7 @@ import (
 	"github.com/sevlyar/go-daemon"
 )
 
-func ss() {
+func ss() error {
 	start := time.Now()
 
 	// Take screenshot.
