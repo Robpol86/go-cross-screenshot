@@ -14,5 +14,5 @@ jobs:
       - run: ./build/screenshot-macos testing-macos 1
       - run: ./build/screenshot-macos testing-macos 0
       - run: ./build/screenshot-macos testing-macos invalid && ls -lah
-      - run: ./build/screenshot-macos testing-macos -d && sleep 1 && ls -lah && cat ss.log
+      - run: ./build/screenshot-macos testing-macos 2 -d && sleep 0.5 && ls -lah && cat ss.log && sleep 4 && ls -lah && cat ss.log
       - {name: Store, uses: actions/upload-artifact@v2, with: {name: build, path: build, if-no-files-found: error}}
