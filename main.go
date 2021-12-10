@@ -1,16 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"image/png"
+	"log"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/kbinani/screenshot"
+	"github.com/sevlyar/go-daemon"
 )
 
-func run() {
+func ss() {
 	start := time.Now()
 	bounds := screenshot.GetDisplayBounds(0)
 
@@ -28,27 +29,58 @@ func run() {
 	defer file.Close()
 	png.Encode(file, img)
 
-	fmt.Println(fileName)
+	log.Println(fileName)
 
-	fmt.Println(time.Since(start))
+	log.Println(time.Since(start))
 }
 
-func main() {
+func run() {
 	loopCount := 1
 	
 	if len(os.Args) > 2 {
 		if i, err := strconv.Atoi(os.Args[2]); err == nil {
-			fmt.Printf("Looping %d time(s)\n", i)
+			log.Printf("Looping %d time(s)\n", i)
 			loopCount = i
 		}
 	}
 	
 	for i := 1; i <= loopCount; i++ {
-		run()
+		ss()
 		if i != loopCount {
 			time.Sleep(2 * time.Second)
 		}
 	}
 	
-	fmt.Println("Done")
+	log.Println("Done")
+}
+
+func main() {
+	if os.Args[len(os.Args)-1] != "-d" {
+		run()
+		return
+	}
+	
+	// Daemon
+	cntxt := &daemon.Context{
+		PidFileName: "ss.pid",
+		PidFilePerm: 0644,
+		LogFileName: "ss.log",
+		LogFilePerm: 0640,
+		WorkDir:     "./",
+		Umask:       027,
+	}
+
+	d, err := cntxt.Reborn()
+	if err != nil {
+		log.Fatal("Unable to run: ", err)
+	}
+	if d != nil {
+		return
+	}
+	defer cntxt.Release()
+
+	log.Print("- - - - - - - - - - - - - - -")
+	log.Print("daemon started")
+	
+	run()
 }
