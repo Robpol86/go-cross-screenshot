@@ -13,25 +13,32 @@ import (
 
 func ss() {
 	start := time.Now()
-	bounds := screenshot.GetDisplayBounds(0)
 
+	// Take screenshot.
+	bounds := screenshot.GetDisplayBounds(0)
 	img, err := screenshot.CaptureRect(bounds)
 	if err != nil {
 		panic(err)
 	}
 
+	// Determine file name.
 	prefix := os.Args[1]
 	now := time.Now()
 	name := prefix + now.Format("_2006-01-02-15-04-05")
-
 	fileName := name + ".png"
-	file, _ := os.Create(fileName)
+	
+	// Write screen shot to file. Return here if file already exists.
+	file, err := os.OpenFile(fileName, os.O_RDWR | os.O_CREATE | os.O_EXCL, 0666)
+	if err != nil {
+		return err
+	}
 	defer file.Close()
 	png.Encode(file, img)
 
+	// Done.
 	log.Println(fileName)
-
 	log.Println(time.Since(start))
+	return file.Sync()
 }
 
 func run() {
@@ -45,7 +52,16 @@ func run() {
 	}
 	
 	for i := 1; i <= loopCount; i++ {
-		ss()
+		// Run.
+		for {
+			err := ss()
+			if err == nil {
+				break
+			}
+			log.Println("File name with same timestamp exists, sleeping and retrying")
+			time.Sleep(1 * time.Second)
+		}
+		// Done with iteration. Sleep if not the last one.
 		if i != loopCount {
 			time.Sleep(2 * time.Second)
 		}
